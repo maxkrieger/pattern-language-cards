@@ -1,0 +1,1 @@
+We seek a ceiling vault shape which will support a live load on the floor above, form the ceiling of the room below, and generate as little bending and tension as possible so that compressive materials can be relied on.

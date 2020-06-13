@@ -1,0 +1,1 @@
+Build connections where the columns meet the beams. Any distribution of material which fills the corner up will do: fillets, gussets, column capitals, mushroom column, and most general of all, the arch, which connects column and beam in a continuous curve.

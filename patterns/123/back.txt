@@ -1,0 +1,1 @@
+For public squares, courts, pedestrian streets, any place where crowds are drawn together, estimate the mean number of people in the place at any given moment (P), and make the area of the place between 150P and 300P square feet.

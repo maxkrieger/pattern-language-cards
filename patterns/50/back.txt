@@ -1,0 +1,1 @@
+Lay out the road system so that any two roads which meet at grade, meet in three-way T junctions as near 90 degrees as possible. Avoid four-way intersections and crossing movements.
