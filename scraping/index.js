@@ -5,7 +5,7 @@ const fs_ = require("fs");
 
 const uri = process.argv[2];
 const outdir = process.argv[3];
-const start = 1;
+const start = 179;
 const end = 253;
 
 console.log(`Getting patterns ${start}-${end} from root uri`, uri);
@@ -87,7 +87,7 @@ const padZeroes = (i) => i.toString().padStart(3, "0");
         )
         .get()
         .flat()
-        .sort();
+        .sort((a, b) => a - b);
       const smallLinks = secondDots
         .nextAll("p")
         .map((j, x) =>
@@ -109,7 +109,7 @@ const padZeroes = (i) => i.toString().padStart(3, "0");
         )
         .get()
         .flat()
-        .sort();
+        .sort((a, b) => a - b);
 
       const meta = { title, asterisks, bigLinks, smallLinks };
       await fs.writeFile(`${outdir}/${i}/meta.json`, JSON.stringify(meta));
