@@ -5,7 +5,7 @@ const fs_ = require("fs");
 
 const uri = process.argv[2];
 const outdir = process.argv[3];
-const start = 179;
+const start = 1;
 const end = 253;
 
 console.log(`Getting patterns ${start}-${end} from root uri`, uri);
@@ -36,6 +36,41 @@ const padZeroes = (i) => i.toString().padStart(3, "0");
       } catch (e) {}
       const res = await got(`${uri}/apl${padZeroes(i)}.htm`);
       const $ = cheerio.load(res.body);
+      const getLinks = (el) =>
+        el
+          .map((j, x) => {
+            const self = $(x).attr("href")
+              ? parseInt(
+                  $(x)
+                    .attr("href")
+                    .match(/apl(\d+)\.htm/)[1],
+                  10
+                )
+              : undefined;
+            const children = $(x)
+              .find("a")
+              .map((k, a) => {
+                return $(a)
+                  .attr("href")
+                  .match(/apl(\d+)\.htm/)
+                  ? parseInt(
+                      $(a)
+                        .attr("href")
+                        .match(/apl(\d+)\.htm/)[1],
+                      10
+                    )
+                  : undefined;
+              })
+              .get();
+            if (self) {
+              return [...children, self];
+            }
+            return children;
+          })
+          .get()
+          .flat()
+          .sort((a, b) => a - b);
+
       const titleMatch = $("p")
         .text()
         .match(/\d+\.? ([\w\s-]+)(\**)/);
@@ -70,46 +105,9 @@ const padZeroes = (i) => i.toString().padStart(3, "0");
         $(`img[src="../images/threedots.gif"]`).last().siblings().length === 0
           ? $(`img[src="../images/threedots.gif"]`).last().parent()
           : $(`img[src="../images/threedots.gif"]`).last();
-      const bigLinks = firstDots
-        .prevAll("p")
-        .map((j, x) =>
-          $(x)
-            .find("a")
-            .map((k, a) =>
-              parseInt(
-                $(a)
-                  .attr("href")
-                  .match(/apl(\d+)\.htm/)[1],
-                10
-              )
-            )
-            .get()
-        )
-        .get()
-        .flat()
-        .sort((a, b) => a - b);
-      const smallLinks = secondDots
-        .nextAll("p")
-        .map((j, x) =>
-          $(x)
-            .find("a")
-            .map((k, a) =>
-              $(a)
-                .attr("href")
-                .match(/apl(\d+)\.htm/)
-                ? parseInt(
-                    $(a)
-                      .attr("href")
-                      .match(/apl(\d+)\.htm/)[1],
-                    10
-                  )
-                : undefined
-            )
-            .get()
-        )
-        .get()
-        .flat()
-        .sort((a, b) => a - b);
+      const bigLinks = getLinks(firstDots.prevAll());
+
+      const smallLinks = getLinks(secondDots.nextAll());
 
       const meta = { title, asterisks, bigLinks, smallLinks };
       await fs.writeFile(`${outdir}/${i}/meta.json`, JSON.stringify(meta));
