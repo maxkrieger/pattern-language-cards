@@ -25,6 +25,8 @@ const toTitleCase = (str) => {
 
 const stripNewlines = (str) => str.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
 
+const padZeroes = (i) => i.toString().padStart(3, "0");
+
 (async () => {
   for (let i = start; i <= end; i++) {
     try {
@@ -32,7 +34,7 @@ const stripNewlines = (str) => str.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
         await fs.mkdir(`${outdir}/${i}`);
         await fs.mkdir(`${outdir}/${i}/all-images`);
       } catch (e) {}
-      const res = await got(`${uri}/apl${i.toString().padStart(3, "0")}.htm`);
+      const res = await got(`${uri}/apl${padZeroes(i)}.htm`);
       const $ = cheerio.load(res.body);
       const titleMatch = $("p")
         .text()
@@ -128,6 +130,19 @@ const stripNewlines = (str) => str.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
                 }`
               )
             );
+          if (image.attr("src") === `../images/${padZeroes(i)}photo.jpg`) {
+            // default it
+            await got
+              .stream(`${uri}/${image.attr("src")}`)
+              .pipe(fs_.createWriteStream(`${outdir}/${i}/front.jpg`));
+          } else if (
+            image.attr("src") === `../images/${padZeroes(i)}diagram.gif`
+          ) {
+            // default it
+            await got
+              .stream(`${uri}/${image.attr("src")}`)
+              .pipe(fs_.createWriteStream(`${outdir}/${i}/back.gif`));
+          }
         }
       });
       console.log(`Finished ${i}: ${title}`);
