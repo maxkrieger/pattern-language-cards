@@ -37,12 +37,19 @@ const stripNewlines = (str) => str.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
       const titleMatch = $("p")
         .text()
         .match(/\d+\.? ([\w\s-]+)(\**)/);
-      const frontTextCandidate = $("p.header2").first().text();
-      //   console.log(frontTextCandidate);
+      const firstDots =
+        $(`img[src="../images/threedots.gif"]`).first().siblings().length === 0
+          ? $(`img[src="../images/threedots.gif"]`).first().parent()
+          : $(`img[src="../images/threedots.gif"]`).first();
+      const others = [1, 10, 18, 33];
       const frontText =
-        frontTextCandidate === titleMatch[0].trim()
-          ? $("p.header2").eq(1).text()
-          : frontTextCandidate;
+        others.indexOf(i) > -1
+          ? firstDots.prevAll("p.header2, span.header2").first().text()
+          : firstDots
+              .nextAll()
+              .filter((j, el) => $(el).text().length > 20)
+              .first()
+              .text();
 
       await fs.writeFile(`${outdir}/${i}/front.txt`, stripNewlines(frontText));
 
@@ -57,10 +64,6 @@ const stripNewlines = (str) => str.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
       const title = toTitleCase(titleMatch[1]);
       const asterisks = titleMatch[2].length;
 
-      const firstDots =
-        $(`img[src="../images/threedots.gif"]`).first().siblings().length === 0
-          ? $(`img[src="../images/threedots.gif"]`).first().parent()
-          : $(`img[src="../images/threedots.gif"]`).first();
       const secondDots =
         $(`img[src="../images/threedots.gif"]`).last().siblings().length === 0
           ? $(`img[src="../images/threedots.gif"]`).last().parent()
