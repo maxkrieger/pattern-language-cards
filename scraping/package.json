@@ -9,7 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "got": "^11.3.0",
+    "got": "^11.8.5",
     "jsdom": "^16.2.2"
   }
 }
